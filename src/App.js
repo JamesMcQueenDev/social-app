@@ -1,6 +1,7 @@
-
 import React, { useRef, useState } from 'react';
 import './App.css';
+import './Home.js';
+import Home from './Home.js';
 
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
@@ -11,76 +12,99 @@ import { useAuthState } from 'react-firebase-hooks/auth';
 import { useCollectionData } from 'react-firebase-hooks/firestore';
 
 firebase.initializeApp({
-    apiKey: "AIzaSyDopuyxgoF0XZIg8pRylwTs9KwGY94iCDo",
-    authDomain: "socialapp-ffcc9.firebaseapp.com",
-    projectId: "socialapp-ffcc9",
-    storageBucket: "socialapp-ffcc9.appspot.com",
-    messagingSenderId: "78689163010",
-    appId: "1:78689163010:web:84379dc65da2907695d41b"
-    }
-)
+  apiKey: "AIzaSyDopuyxgoF0XZIg8pRylwTs9KwGY94iCDo",
+  authDomain: "socialapp-ffcc9.firebaseapp.com",
+  projectId: "socialapp-ffcc9",
+  storageBucket: "socialapp-ffcc9.appspot.com",
+  messagingSenderId: "78689163010",
+  appId: "1:78689163010:web:84379dc65da2907695d41b"
+})
 
 const auth = firebase.auth();
 const firestore = firebase.firestore();
+const analytics = firebase.analytics();
+
+const signInWithGoogle = () => {
+  const provider = new firebase.auth.GoogleAuthProvider();
+  auth.signInWithPopup(provider);
+}
+
 
 function App() {
   const[user] = useAuthState(auth);
   return (
     <div className="App">
       <header>
-        <SignOut />
-        <Home/>
+        <SignOut/>
+        {user? <Home/>: <SignOut/>}
       </header>
       <section>
-        {user? <ChatRoom/>: <SignInGoogle />}
+        {user? <ChatRoom/>: <SignIn />}
       </section>
     </div>
   );
 }
 
-function SignInForm(){
-  return(
-    <form>
-    <h2>LogIn</h2>
-    <input placeholder='Username'></input>
-    <input placeholder='Passord'></input>
-    <button>Sign In</button>
-    </form>
-  )
-}
+function SignIn(){
 
-function SignInGoogle(){
-  const GoogleSignIn = () =>{
+  return(
+      <form>
+        <h2>Log In</h2>
+        <label for="username">Username</label>
+        <input placeholder='Username'></input>
+        <label for="password">Password</label>
+        <input placeholder='Password'></input>
+        <button>Log In</button>
+        <div className='social'>
+          <GoogleSignIn/>
+          <FacebookSignIn/>
+          <Microsoft/>
+        </div>
+
+        <a href="">Don't Have an Account?</a>
+      </form>
+  )
+} 
+
+function GoogleSignIn() {
+
+  const signInWithGoogle = () => {
     const provider = new firebase.auth.GoogleAuthProvider();
     auth.signInWithPopup(provider);
   }
 
-  return(
-    <>
-    <button className='signIn' onClick={GoogleSignIn}>Google</button>
-    </>
+  return (
+      <button id="Google" onClick={signInWithGoogle}>Google</button>
+  )
+}
+
+function FacebookSignIn() {
+
+  const signInWithGoogle = () => {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    auth.signInWithPopup(provider);
+  }
+
+  return (
+      <button onClick={signInWithGoogle}>Facebook</button>
+  )
+}
+
+function Microsoft() {
+
+  const signInWithGoogle = () => {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    auth.signInWithPopup(provider);
+  }
+
+  return (
+      <button id="Microsoft"onClick={signInWithGoogle}>Microsoft</button>
   )
 }
 
 function SignOut() {
   return auth.currentUser && (
     <button className="sign-out" onClick={() => auth.signOut()}>Sign Out</button>
-  )
-}
-
-function Home(){
-  return(
-    <button className='home' onClick={{}}>Home</button>
-  )
-}
-
-function SignInFacebook(){
-  const FacebookSignIn = ()=>{
-    const provider = new firebase.auth.FacebookAuthProvider();
-    auth.signInWithPopup(provider);
-  }
-  return(
-    <button onClick={FacebookSignIn}>Facebook</button>
   )
 }
 
@@ -137,11 +161,10 @@ function ChatMessage(props) {
 
   return (<>
     <div className={`message ${messageClass}`}>
-      <img src={photoURL || 'https://api.adorable.io/avatars/23/abott@adorable.png'} />
+      <img alt="{uid}"src={photoURL || 'https://api.adorable.io/avatars/23/abott@adorable.png'} />
       <p>{text}</p>
     </div>
   </>)
 }
-
 
 export default App;
