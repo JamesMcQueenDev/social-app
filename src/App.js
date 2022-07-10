@@ -2,8 +2,6 @@
 import React, { useRef, useState } from 'react';
 import './App.css';
 
-
-//import firebaseInit from './components/firebase.js';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
 import 'firebase/compat/auth';
@@ -31,6 +29,7 @@ function App() {
     <div className="App">
       <header>
         <SignOut />
+        <Home/>
       </header>
       <section>
         {user? <ChatRoom/>: <SignInGoogle />}
@@ -69,6 +68,12 @@ function SignOut() {
   )
 }
 
+function Home(){
+  return(
+    <button className='home' onClick={{}}>Home</button>
+  )
+}
+
 function SignInFacebook(){
   const FacebookSignIn = ()=>{
     const provider = new firebase.auth.FacebookAuthProvider();
@@ -92,7 +97,7 @@ function ChatRoom() {
   const sendMessage = async (e) => {
     e.preventDefault();
 
-    const { uid, photoURL } = auth.currentUser;
+    const { uid, photoURL} = auth.currentUser;
 
     await messagesRef.add({
       text: formValue,
@@ -116,9 +121,9 @@ function ChatRoom() {
 
     <form onSubmit={sendMessage}>
 
-      <input value={formValue} onChange={(e) => setFormValue(e.target.value)} placeholder="say something nice" />
+      <input value={formValue} onChange={(e) => setFormValue(e.target.value)} placeholder="Message" />
 
-      <button type="submit" disabled={!formValue}>🕊️</button>
+      <button type="submit" disabled={!formValue}> => </button>
 
     </form>
   </>)
