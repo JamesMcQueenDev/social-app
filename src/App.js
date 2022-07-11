@@ -1,7 +1,9 @@
 import React, { useRef, useState } from 'react';
 import './App.css';
-import './Home.js';
-import Home from './Home.js';
+
+import googleLogo from './google-icon.png'
+import facebookLogo from './facebook-icon.png'
+import microsoftLogo from './microsoft-icon.png'
 
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
@@ -24,22 +26,16 @@ const auth = firebase.auth();
 const firestore = firebase.firestore();
 const analytics = firebase.analytics();
 
-const signInWithGoogle = () => {
-  const provider = new firebase.auth.GoogleAuthProvider();
-  auth.signInWithPopup(provider);
-}
-
 
 function App() {
   const[user] = useAuthState(auth);
   return (
     <div className="App">
       <header>
-        <SignOut/>
-        {user? <Home/>: <SignOut/>}
+        {user? <Home/>: <SignOut/>,<Profile/>,<TimeLine/>}
       </header>
       <section>
-        {user? <ChatRoom/>: <SignIn />}
+        {user? <ChatRoom/>: <GoogleSignIn />}
       </section>
     </div>
   );
@@ -49,22 +45,52 @@ function SignIn(){
 
   return(
       <form>
-        <h2>Log In</h2>
-        <label for="username">Username</label>
+        <h2>Welcome</h2>
         <input placeholder='Username'></input>
-        <label for="password">Password</label>
-        <input placeholder='Password'></input>
-        <button>Log In</button>
+        <input placeholder='Password' type="password"></input>
+        <button id="LogInBtn">Log In</button>
         <div className='social'>
           <GoogleSignIn/>
           <FacebookSignIn/>
-          <Microsoft/>
+          <MicrosoftSignIn/>
         </div>
-
-        <a href="">Don't Have an Account?</a>
+        
+        <a>Don't Have an Account?</a>
       </form>
   )
-} 
+}
+
+function Home(){
+  return(
+    <button>Home</button>
+  )
+}
+
+function TimeLine(){
+  return(
+    <button>Timeline</button>
+  )
+}
+
+function Profile(){
+  return(
+    <button>Profile</button>
+  )
+}
+
+
+function CreateAccount(){
+  return(
+    <form>
+      <h2>Create Account</h2>
+      <input placeholder='Username'></input>
+      <input placeholder='Password' type="password"></input>
+      <button id="LogInBtn">Log In</button>
+      
+      <a onClick={CreateAccount}>Don't Have an Account?</a>
+    </form>
+  )
+}
 
 function GoogleSignIn() {
 
@@ -74,9 +100,10 @@ function GoogleSignIn() {
   }
 
   return (
-      <button id="Google" onClick={signInWithGoogle}>Google</button>
+      <button id="Google" onClick={signInWithGoogle}><img src={googleLogo} /></button>
   )
 }
+
 
 function FacebookSignIn() {
 
@@ -86,11 +113,11 @@ function FacebookSignIn() {
   }
 
   return (
-      <button onClick={signInWithGoogle}>Facebook</button>
+      <button onClick={signInWithGoogle}><img src={facebookLogo} /></button>
   )
 }
 
-function Microsoft() {
+function MicrosoftSignIn() {
 
   const signInWithGoogle = () => {
     const provider = new firebase.auth.GoogleAuthProvider();
@@ -98,7 +125,7 @@ function Microsoft() {
   }
 
   return (
-      <button id="Microsoft"onClick={signInWithGoogle}>Microsoft</button>
+      <button id="Microsoft"onClick={signInWithGoogle}><img src={microsoftLogo} /></button>
   )
 }
 
@@ -136,19 +163,13 @@ function ChatRoom() {
 
   return (<>
     <main>
-
       {messages && messages.map(msg => <ChatMessage key={msg.id} message={msg} />)}
-
       <span ref={dummy}></span>
-
     </main>
 
-    <form onSubmit={sendMessage}>
-
-      <input value={formValue} onChange={(e) => setFormValue(e.target.value)} placeholder="Message" />
-
-      <button type="submit" disabled={!formValue}> => </button>
-
+    <form id="messager" onSubmit={sendMessage}>
+      <input id="messagerInput" value={formValue} onChange={(e) => setFormValue(e.target.value)} placeholder="Message" />
+      <button id="messagerBtn" type="submit" disabled={!formValue}> => </button>
     </form>
   </>)
 }
@@ -156,7 +177,6 @@ function ChatRoom() {
 
 function ChatMessage(props) {
   const { text, uid, photoURL } = props.message;
-
   const messageClass = uid === auth.currentUser.uid ? 'sent' : 'received';
 
   return (<>
